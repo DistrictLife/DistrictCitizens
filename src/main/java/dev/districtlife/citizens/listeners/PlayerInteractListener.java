@@ -55,6 +55,8 @@ public class PlayerInteractListener implements Listener {
         if (item == null || !IdCardItem.isIdCard(item)) return;
 
         event.setCancelled(true);
+        event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+        event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
         event.getPlayer().updateInventory();
 
         ItemMeta meta = item.getItemMeta();
