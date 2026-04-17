@@ -41,10 +41,8 @@ public class IdCardItem {
 
     public static boolean isIdCard(ItemStack item) {
         if (item == null || item.getType() != Material.PAPER || !item.hasItemMeta()) return false;
-        ItemMeta meta = item.getItemMeta();
-        if (!meta.hasCustomModelData() || meta.getCustomModelData() != 1001) return false;
         NamespacedKey serialKey = new NamespacedKey(DLCitizensPlugin.getInstance(), "id_serial");
-        return meta.getPersistentDataContainer().has(serialKey, PersistentDataType.STRING);
+        return item.getItemMeta().getPersistentDataContainer().has(serialKey, PersistentDataType.STRING);
     }
 
     public static String readSerial(ItemStack item) {

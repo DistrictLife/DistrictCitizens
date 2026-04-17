@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -41,15 +40,16 @@ public class PlayerInteractListener implements Listener {
         Action action = event.getAction();
         if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) return;
 
-        // getItem() peut retourner null sur Arclight — fallback sur la main principale
+        // getItem() retourne null sur Arclight — fallback sur la main principale
         ItemStack item = event.getItem();
         if (item == null) {
             item = event.getPlayer().getInventory().getItemInMainHand();
         }
 
         plugin.getLogger().info("[IdCard] RIGHT_CLICK: player=" + event.getPlayer().getName()
-            + " item=" + (item != null ? item.getType().name() : "null")
-            + " hasMeta=" + (item != null && item.hasItemMeta())
+            + " getItem=" + (event.getItem() != null ? event.getItem().getType().name() : "null")
+            + " mainHand=" + (event.getPlayer().getInventory().getItemInMainHand() != null
+                ? event.getPlayer().getInventory().getItemInMainHand().getType().name() : "null")
             + " isIdCard=" + (item != null && IdCardItem.isIdCard(item)));
 
         if (item == null || !IdCardItem.isIdCard(item)) return;
@@ -70,11 +70,11 @@ public class PlayerInteractListener implements Listener {
         String lastName  = pdc.get(new NamespacedKey(plugin, "id_last_name"),  PersistentDataType.STRING);
         String birthDate = pdc.get(new NamespacedKey(plugin, "id_birth_date"), PersistentDataType.STRING);
 
-        plugin.getLogger().info("[IdCard] PDC lu : serial=" + serial + " owner=" + ownerStr
+        plugin.getLogger().info("[IdCard] PDC: serial=" + serial + " owner=" + ownerStr
             + " fn=" + firstName + " ln=" + lastName + " bd=" + birthDate);
 
         if (serial == null || ownerStr == null) {
-            plugin.getLogger().warning("[IdCard] PDC incomplet (serial=" + serial + " owner=" + ownerStr + ")");
+            plugin.getLogger().warning("[IdCard] PDC incomplet — serial=" + serial + " owner=" + ownerStr);
             return;
         }
 
@@ -102,29 +102,13 @@ public class PlayerInteractListener implements Listener {
         });
     }
 
-    // Empêche le joueur de jeter la carte d'identité (touche Q)
+    // Empêche uniquement le jet (Q) de la carte — le déplacement dans l'inventaire
+    // et le transfert à d'autres joueurs restent libres.
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDropItem(PlayerDropItemEvent event) {
         if (IdCardItem.isIdCard(event.getItemDrop().getItemStack())) {
             event.setCancelled(true);
-            event.getPlayer().updateInventory();
             event.getPlayer().sendMessage("\u00a7cVous ne pouvez pas jeter votre pi\u00e8ce d'identit\u00e9.");
-        }
-    }
-
-    // Empêche le joueur de déplacer la carte d'identité dans l'inventaire
-    // (évite la désync client/serveur qui fait disparaître l'item)
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryClick(InventoryClickEvent event) {
-        ItemStack current = event.getCurrentItem();
-        ItemStack cursor  = event.getCursor();
-
-        boolean currentIsCard = IdCardItem.isIdCard(current);
-        boolean cursorIsCard  = IdCardItem.isIdCard(cursor);
-
-        if (currentIsCard || cursorIsCard) {
-            event.setCancelled(true);
-            event.getWhoClicked().updateInventory();
         }
     }
 }
