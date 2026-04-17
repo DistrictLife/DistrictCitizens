@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import org.bukkit.inventory.EquipmentSlot;
+
 import java.util.UUID;
 
 public class PlayerInteractListener implements Listener {
@@ -35,6 +37,9 @@ public class PlayerInteractListener implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        // Ignorer les événements off-hand (Arclight fire l'event deux fois par clic)
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
         // Carte d'identité : uniquement sur clic droit
         Action action = event.getAction();
