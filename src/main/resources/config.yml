@@ -1,0 +1,29 @@
+# DLCitizens — Configuration principale
+
+# Année RP utilisée pour le format des sérials de carte d'identité (DL-YYYY-NNNNN)
+rp_year: 2026
+
+# Zone de téléportation pendant la création de personnage
+creation_zone:
+  world: world
+  x: 0.5
+  y: 64.0
+  z: 0.5
+  yaw: 0.0
+
+# Protection pendant la création
+creation_protection:
+  # Durée maximale du flow de création en secondes (300 = 5 minutes)
+  timeout_seconds: 300
+
+# Compteurs d'apparence (doit correspondre aux assets du mod dlclient)
+appearance:
+  skin_tone_count: 6
+  eye_color_count: 5
+  hair_style_count: 8
+  hair_color_count: 6
+
+# Rate limiting
+rate_limit:
+  # Nombre maximum de requêtes CheckNameUnique par minute par joueur
+  check_name_per_minute: 5

@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag de release (ex: v1.0.17)'
+        required: true
+
+jobs:
+  build:
+    name: Build & Release DLCitizens
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Cache Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build (release, sans tests)
+        run: mvn -B package -DskipTests
+
+      - name: Récupérer le nom du JAR
+        id: jar
+        run: |
+          JAR=$(ls target/DLCitizens-*.jar | grep -v 'original\|dependency-reduced' | head -1)
+          echo "path=$JAR" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename $JAR)" >> "$GITHUB_OUTPUT"
+
+      - name: Créer la Release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || inputs.tag }}
+          name: DLCitizens ${{ github.ref_name || inputs.tag }}
+          draft: false
+          prerelease: false
+          files: ${{ steps.jar.outputs.path }}
+          body: |
+            ## DLCitizens ${{ github.ref_name || inputs.tag }}
+
+            Plugin Bukkit/Arclight — système de création de personnage RP.
+
+            **Installation :** déposer le JAR dans le dossier `plugins/` du serveur Arclight 1.16.5.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

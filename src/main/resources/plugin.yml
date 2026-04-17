@@ -1,0 +1,18 @@
+name: DLCitizens
+version: 1.0.17
+main: dev.districtlife.citizens.DLCitizensPlugin
+api-version: 1.16
+description: Système de création de personnage RP pour District Life
+authors: [DistrictLife]
+depend: [AuthMe]
+
+commands:
+  dlcitizen:
+    description: Commandes admin de gestion des citoyens
+    usage: /dlcitizen <lookup|edit|reset|reissue|stats>
+    permission: dlcitizens.admin
+
+permissions:
+  dlcitizens.admin:
+    description: Accès aux commandes admin DLCitizens
+    default: op
