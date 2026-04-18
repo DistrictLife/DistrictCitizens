@@ -6,7 +6,7 @@
 
     <groupId>dev.districtlife</groupId>
     <artifactId>DLCitizens</artifactId>
-    <version>1.0.22</version>
+    <version>1.0.23</version>
     <packaging>jar</packaging>
 
     <properties>
