@@ -55,6 +55,7 @@ public class DLCitizensPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
         getServer().getPluginManager().registerEvents(new ModCheckListener(this), this);
+        getServer().getPluginManager().registerEvents(new IdCardDebugListener(this), this);
     }
 
     private void registerCommands() {
