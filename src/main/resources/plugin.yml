@@ -1,5 +1,5 @@
 name: DLCitizens
-version: 1.0.21
+version: 1.0.22
 main: dev.districtlife.citizens.DLCitizensPlugin
 api-version: 1.16
 description: Système de création de personnage RP pour District Life
